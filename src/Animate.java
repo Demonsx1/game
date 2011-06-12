@@ -14,7 +14,7 @@ public class Animate extends JFrame {
 	private static final int WIDTH = 400;
 	private static final int HEIGHT = 400;
 	private static final int ANIM_DELAY = 83;
-	private static final String imageFile = "spaceman.png";
+	private static final String imageFile = "img" + File.separatorChar + "spaceman.png";
 	private boolean runAnimation;
 	private LinkedList<SpriteRunnable> sprites = new LinkedList<SpriteRunnable>();
 
@@ -58,6 +58,7 @@ public class Animate extends JFrame {
 		try {
 			i = ImageIO.read(new File(filename));
 		} catch (Exception e) {
+			System.err.println("Error loading file: " + filename);
 			e.printStackTrace();
 		}
 		return i;
