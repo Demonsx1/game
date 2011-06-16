@@ -4,58 +4,70 @@ import java.awt.image.BufferedImage;
 
 public abstract class SpriteRunnable implements Runnable, KeyListener {
 
-	BufferedImage[] frames;
-	BufferedImage img;
-	Graphics2D graphicsCtx;
-	int width;
-	int height;
-	long animDelay;
-	boolean keepRunning;
+    BufferedImage[] frames;
+    BufferedImage img;
+    Graphics2D graphicsCtx;
+    int x;
+    int y;
+    long animDelay;
+    boolean keepRunning;
+    private int frameX;
+    private int frameY;
+    private int xLoc;
+    private int yLoc;
 
-	void setGrphx(Graphics2D g) {
-		this.graphicsCtx = g;
-	}
+    void setGrphx(Graphics2D g) {
+        this.graphicsCtx = g;
+    }
 
-	void setImg(BufferedImage i) {
-		this.img = i;
-	}
+    void setImg(BufferedImage i) {
+        this.img = i;
+    }
 
-	void setDelay(long millis) {
-		this.animDelay = millis;
-	}
+    void setDelay(long millis) {
+        this.animDelay = millis;
+    }
 
-	void setW(int width) {
-		this.width = width;
-	}
+    boolean keepRunning() {
+        return keepRunning;
+    }
 
-	void setH(int height) {
-		this.height = height;
-	}
+    void setRunning(boolean flag) {
+        this.keepRunning = flag;
+    }
 
-	boolean keepRunning() {
-		return keepRunning;
-	}
 
-	void setRunning(boolean flag) {
-		this.keepRunning = flag;
-	}
+    public int getFrameX() {
+        return frameX;
+    }
 
-	static BufferedImage[] splitImage(BufferedImage img, int cols, int rows) {
-		int w = (int) img.getWidth() / cols;
-		int h = (int) img.getHeight() / rows;
+    public void setFrameX(int frameX) {
+        this.frameX = frameX;
+    }
 
-		int num = 0;
+    public int getFrameY() {
+        return frameY;
+    }
 
-		BufferedImage[] imgs = new BufferedImage[cols * rows];
-		for (int y = 0; y < rows; y++) {
-			for (int x = 0; x < cols; x++) {
-				imgs[num] = new BufferedImage(w, h, img.getType());
-				Graphics2D g = imgs[num].createGraphics();
-				g.drawImage(img, 0, 0, w, h, w * x, h * y, w * x + w, h * y + h, null);
-				g.dispose();
-				num++;
-			}
-		}
-		return imgs;
-	}
+    public void setFrameY(int frameY) {
+        this.frameY = frameY;
+    }
+
+    public int getxLoc() {
+        return xLoc;
+    }
+
+    public void setxLoc(int xLoc) {
+        this.xLoc = xLoc;
+    }
+
+    public int getyLoc() {
+        return yLoc;
+    }
+
+    public void setyLoc(int yLoc) {
+        this.yLoc = yLoc;
+    }
+
+
 }

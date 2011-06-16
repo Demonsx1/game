@@ -10,95 +10,85 @@ import javax.swing.*;
 
 public class Animate extends JFrame {
 
-	private static final long serialVersionUID = 1L;
-	private static final int WIDTH = 400;
-	private static final int HEIGHT = 400;
-	private static final int ANIM_DELAY = 83;
-	private static final String imageFile = "img" + File.separatorChar + "spaceman.png";
-	private boolean runAnimation;
-	private LinkedList<SpriteRunnable> sprites = new LinkedList<SpriteRunnable>();
+    private static final long serialVersionUID = 1L;
+    private static final int WIDTH = 400;
+    private static final int HEIGHT = 400;
 
-	public static void main(String... args) {
-		loadImage(imageFile);
-		new Animate();
-	}
+    private static final String spriteImageFilename =
+        "img" + File.separatorChar + "spaceman.png";
+    private boolean runAnimation;
+    private SpriteRunnableFactory spriteFactory;
+    private LinkedList<SpriteRunnable> sprites =
+        new LinkedList<SpriteRunnable>();
 
-	/* Constructor */
-	Animate() {
-		runAnimation = false;
-		BufferedImage image = loadImage(imageFile);
+    public static void main(String... args) {
+        //loadImage(imageFile);
+        new Animate();
+    }
 
-		this.addWindowListener(new WindowAdapter() {
-				@Override
-				public void windowClosing(WindowEvent e) {
-					System.exit(0);
-				}
-			}
-		);
+    /* Constructor */
+    Animate() {
+        runAnimation = false;
 
-		JButton startToggle = new JButton("Start/Stop");
-		startToggle.addActionListener(new StartStopListener());
-		setLayout(new BorderLayout());
-		add(startToggle, BorderLayout.SOUTH);
-		setSize(WIDTH, HEIGHT);
-		setVisible(true);
+        this.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    System.exit(0);
+                }
+            }
+        );
 
-		Spaceman s = new Spaceman();
-		s.setImg(image);
-		s.setDelay(83);
-		s.setGrphx((Graphics2D) getGraphics());
-		s.setH(HEIGHT);
-		s.setW(WIDTH);
+        JButton startToggle = new JButton("Start/Stop");
+        startToggle.addActionListener(new StartStopListener());
+        setLayout(new BorderLayout());
+        add(startToggle, BorderLayout.SOUTH);
+        setSize(WIDTH, HEIGHT);
+        setLocationRelativeTo(null);
+        getContentPane().setBackground(Color.BLACK);
+        setVisible(true);
+        spriteFactory = new SpacemanFactory(spriteImageFilename,
+                getContentPane().getWidth(), getContentPane().getHeight(),
+                (Graphics2D) getGraphics());
+        sprites.add(spriteFactory.getSprite());
+    }
 
-		sprites.add(s);
-	}
+    public static BufferedImage loadImage(String filename) {
+        BufferedImage i = null;
+        try {
+            i = ImageIO.read(new File(filename));
+        } catch (Exception e) {
+            System.err.println("Error loading file: " + filename);
+            e.printStackTrace();
+        }
+        return i;
+    }
 
-	public static BufferedImage loadImage(String filename) {
-		BufferedImage i = null;
-		try {
-			i = ImageIO.read(new File(filename));
-		} catch (Exception e) {
-			System.err.println("Error loading file: " + filename);
-			e.printStackTrace();
-		}
-		return i;
-	}
+    private class StartStopListener implements ActionListener {
 
-	private class StartStopListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            runAnimation = (!runAnimation);
+            if (runAnimation) {
+                startThreads();
+            } else {
+                stopThreads();
+            }
+        }
 
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			runAnimation = (!runAnimation);
-			if(runAnimation) {
-				startThreads();
-			} else {
-				stopThreads();
-			}
-		}
+        private void startThreads() {
+            for (SpriteRunnable sprt : sprites) {
+                new Thread(sprt).start();
+            }
 
-		private void startThreads() {
-			for(SpriteRunnable sprt : sprites) {
-				new Thread(sprt).start();
-			}
+        }
 
-		}
+        private void stopThreads() {
+            for (SpriteRunnable sprt: sprites) {
+                sprt.setRunning(false);
+            }
+        }
 
-		private void stopThreads() {
-			for(SpriteRunnable sprt: sprites) {
-				sprt.setRunning(false);
-			}
-		}
-
-	}
-
-
-	public static int getAnimDelay() {
-		return ANIM_DELAY;
-	}
-
-	public static int getW() {
-		return WIDTH;
-	}
-
+    }
 
 }
+
