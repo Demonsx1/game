@@ -2,8 +2,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JFrame;
-
 
 public class SpacemanFactory implements SpriteRunnableFactory {
     private final BufferedImage image;
@@ -44,6 +42,16 @@ public class SpacemanFactory implements SpriteRunnableFactory {
         s.setGrphx(graphics);
         s.setxLoc(ctr.x);
         s.setyLoc(ctr.y);
+        return s;
+    }
+
+    public SpriteRunnable getSprite(Point p) {
+        Spaceman s = new Spaceman();
+        s.init(image);
+        s.setDelay(83);
+        s.setGrphx(graphics);
+        s.setxLoc(p.x);
+        s.setyLoc(p.y);
         return s;
     }
 

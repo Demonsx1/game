@@ -3,8 +3,6 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.LinkedList;
-
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
@@ -14,12 +12,10 @@ public class Animate extends JFrame {
     private static final int WIDTH = 400;
     private static final int HEIGHT = 400;
 
-    private static final String spriteImageFilename =
-        "img" + File.separatorChar + "spaceman.png";
+    private static final String spriteImageFilename = "img" + File.separatorChar + "spaceman.png";
     private boolean runAnimation;
     private SpriteRunnableFactory spriteFactory;
-    private LinkedList<SpriteRunnable> sprites =
-        new LinkedList<SpriteRunnable>();
+    private LinkedList<SpriteRunnable> sprites =  new LinkedList<SpriteRunnable>();
 
     public static void main(String... args) {
         //loadImage(imageFile);
@@ -40,6 +36,7 @@ public class Animate extends JFrame {
 
         JButton startToggle = new JButton("Start/Stop");
         startToggle.addActionListener(new StartStopListener());
+        this.addMouseListener(new MouseTracker());
         setLayout(new BorderLayout());
         add(startToggle, BorderLayout.SOUTH);
         setSize(WIDTH, HEIGHT);
@@ -86,6 +83,39 @@ public class Animate extends JFrame {
             for (SpriteRunnable sprt: sprites) {
                 sprt.setRunning(false);
             }
+        }
+
+    }
+
+    private class MouseTracker implements MouseListener {
+
+        @Override
+        public void mouseClicked(MouseEvent arg0) {
+            sprites.add(spriteFactory.getSprite(arg0.getPoint()));
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent arg0) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent arg0) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void mousePressed(MouseEvent arg0) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent arg0) {
+            // TODO Auto-generated method stub
+
         }
 
     }
