@@ -1,11 +1,17 @@
+import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 public abstract class SpriteRunnable implements Runnable, KeyListener {
 
-    BufferedImage[] frames;
-    BufferedImage img;
+    List<BufferedImage> frames;
+    Rectangle spaceOccupied;
     Graphics2D graphicsCtx;
     int x;
     int y;
@@ -18,10 +24,6 @@ public abstract class SpriteRunnable implements Runnable, KeyListener {
 
     void setGrphx(Graphics2D g) {
         this.graphicsCtx = g;
-    }
-
-    void setImg(BufferedImage i) {
-        this.img = i;
     }
 
     void setDelay(long millis) {
@@ -68,6 +70,36 @@ public abstract class SpriteRunnable implements Runnable, KeyListener {
     public void setyLoc(int yLoc) {
         this.yLoc = yLoc;
     }
-
+    
+    public void setSpaceOccupied(Rectangle rect) {
+    	this.spaceOccupied = rect;
+    }
+    
+    public void setSpaceOccupied(Point p) {
+    	spaceOccupied.setLocation(p);
+    }
+    
+    public Rectangle getSpaceOccupied() {
+    	return spaceOccupied;
+    }
+    
+    public void setFrames(BufferedImage[] frames) {
+    	this.frames = ImmutableList.copyOf(frames);
+    }
+    
+   public Dimension getImageSize() {
+    	if (null != frames && (frames.size() > 0)) {
+    		return new Dimension(frames.get(0).getWidth(), frames.get(0).getHeight());
+    	} else {
+    		return new Dimension(-1,-1);
+    	}
+    }
+    
+   
+	public void run() {
+		animate();
+	}
+	
+    public abstract void animate();
 
 }

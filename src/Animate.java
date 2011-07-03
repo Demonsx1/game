@@ -3,6 +3,8 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.LinkedList;
+import java.util.Random;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
@@ -12,9 +14,9 @@ public class Animate extends JFrame {
     private static final int WIDTH = 400;
     private static final int HEIGHT = 400;
 
-    private static final String spriteImageFilename = "img" + File.separatorChar + "spaceman.png";
+    private static final String spacemanFile = "img" + File.separatorChar + "spaceman.png";
     private boolean runAnimation;
-    private SpriteRunnableFactory spriteFactory;
+    private SpriteRunnableFactory spacemanFactory;
     private LinkedList<SpriteRunnable> sprites =  new LinkedList<SpriteRunnable>();
 
     public static void main(String... args) {
@@ -43,10 +45,10 @@ public class Animate extends JFrame {
         setLocationRelativeTo(null);
         getContentPane().setBackground(Color.BLACK);
         setVisible(true);
-        spriteFactory = new SpacemanFactory(spriteImageFilename,
+        spacemanFactory = new SpacemanFactory(this, loadImage(spacemanFile),
                 getContentPane().getWidth(), getContentPane().getHeight(),
                 (Graphics2D) getGraphics());
-        sprites.add(spriteFactory.getSprite());
+        sprites.add(spacemanFactory.getSprite());
     }
 
     public static BufferedImage loadImage(String filename) {
@@ -58,6 +60,24 @@ public class Animate extends JFrame {
             e.printStackTrace();
         }
         return i;
+    }
+    
+    public Point getEmptyPosition(Point p, Dimension d) {
+    	Rectangle trial = new Rectangle(0,0, d.width, d.height);
+    	Random rand = new Random(System.currentTimeMillis());
+    	boolean empty = false;
+    	while(!empty) {
+    		boolean collision = false;
+    		for(SpriteRunnable sprite : sprites) {
+    			if(trial.intersects(sprite.spaceOccupied)) {
+    				collision = true;
+    			}
+    		}
+    		trial.setLocation(Math.abs(rand.nextInt()) % this.getContentPane().getWidth(),
+    						  Math.abs(rand.nextInt()) % this.getContentPane().getHeight());
+    		empty = !collision;
+    	}
+		return trial.getLocation();
     }
 
     private class StartStopListener implements ActionListener {
@@ -91,7 +111,10 @@ public class Animate extends JFrame {
 
         @Override
         public void mouseClicked(MouseEvent arg0) {
-            sprites.add(spriteFactory.getSprite(arg0.getPoint()));
+        	SpriteRunnable sprite = spacemanFactory.getSprite(getEmptyPosition(
+					arg0.getPoint(), spacemanFactory.getImageSize()));
+        	new Thread(sprite).start();
+        	sprites.add(sprite);
         }
 
         @Override
